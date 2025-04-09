@@ -1,0 +1,1 @@
+ALTER TABLE public.event ADD title VARCHAR(60) not null;
