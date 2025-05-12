@@ -5,13 +5,12 @@ import org.example.eventplanner.adapters.persistance.dao.*;
 import org.example.eventplanner.adapters.persistance.mapper.EventGuestMapperDB;
 import org.example.eventplanner.adapters.persistance.mapper.EventMapperDB;
 import org.example.eventplanner.adapters.persistance.mapper.GuestMapperDB;
-import org.example.eventplanner.adapters.persistance.repository.jpa.EventGuestJpaRepository;
-import org.example.eventplanner.adapters.persistance.repository.jpa.EventJpaRepository;
-import org.example.eventplanner.adapters.persistance.repository.jpa.GuestJpaRepository;
-import org.example.eventplanner.core.domain.entity.Event;
-import org.example.eventplanner.core.domain.entity.EventGuest;
-import org.example.eventplanner.core.domain.entity.Guest;
-import org.example.eventplanner.core.domain.entity.enums.Themes;
+import org.example.eventplanner.repository.EventGuestRepository;
+import org.example.eventplanner.repository.EventRepository;
+import org.example.eventplanner.repository.GuestRepository;
+import org.example.eventplanner.entity.Event;
+import org.example.eventplanner.entity.EventGuest;
+import org.example.eventplanner.entity.Guest;
 import org.example.eventplanner.core.repository.EventGuestRepository;
 
 import java.util.ArrayList;
@@ -22,29 +21,29 @@ import java.util.UUID;
 @Builder
 public class EventGuestRepositoryImpl implements EventGuestRepository {
 
-    private final EventGuestJpaRepository eventGuestJpaRepository;
-    private final GuestJpaRepository guestJpaRepository;
-    private final EventJpaRepository eventJpaRepository;
+    private final EventGuestRepository eventGuestRepository;
+    private final GuestRepository guestRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public List<EventGuest> findAllEventGuests() {
-        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestJpaRepository.findAll());
+        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestRepository.findAll());
     }
 
     @Override
     public List<EventGuest> findAllConfirmedEventGuestsByEventId(UUID eventId) {
-        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestJpaRepository.findAllByEventIdAndAttendingTrue(eventId));
+        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestRepository.findAllByEventIdAndAttendingTrue(eventId));
     }
 
     @Override
     public List<EventGuest> findAllEventGuestsByEventId(UUID eventId) {
-        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestJpaRepository.findAllByEventId(eventId));
+        return EventGuestMapperDB.INSTANCE.eventGuestDaoListToEventGuestList(eventGuestRepository.findAllByEventId(eventId));
     }
 
     @Override
     public List<Guest> findTopFiveConfirmedAndAttendedEventGuests() {
         List<Guest> topFiveConfirmedAndAttendedEventGuests = new ArrayList<>();
-        List<Top5GuestsDao> tgsdList = eventGuestJpaRepository.findTop5ConfirmedAttendedGuests();
+        List<Top5GuestsDao> tgsdList = eventGuestRepository.findTop5ConfirmedAttendedGuests();
         tgsdList.sort( (a, b) -> {
             if (a.getAttendanceCount() > b.getAttendanceCount()) {
                 return 1;
@@ -55,7 +54,7 @@ public class EventGuestRepositoryImpl implements EventGuestRepository {
             }
         });
         for (Top5GuestsDao tgsd : tgsdList) {
-            Optional<GuestDao> optionalGuestDao = guestJpaRepository.findById(tgsd.getGuestId());
+            Optional<GuestDao> optionalGuestDao = guestRepository.findById(tgsd.getGuestId());
             if (optionalGuestDao.isPresent()) {
                 topFiveConfirmedAndAttendedEventGuests.add(GuestMapperDB.INSTANCE.guestDaoToGuest(optionalGuestDao.get()));
             }
@@ -66,9 +65,9 @@ public class EventGuestRepositoryImpl implements EventGuestRepository {
     @Override
     public List<Guest> findFrequentNoShowers() {
         List<Guest> frequentNoShowersList = new ArrayList<>();
-        List<FrequentNoShowersDao> frequentNoShowersDaoList = eventGuestJpaRepository.findFrequentNoShowers();
+        List<FrequentNoShowersDao> frequentNoShowersDaoList = eventGuestRepository.findFrequentNoShowers();
         for (FrequentNoShowersDao fnd : frequentNoShowersDaoList) {
-            Optional<GuestDao> optionalGuestDao = guestJpaRepository.findById(fnd.getGuestId());
+            Optional<GuestDao> optionalGuestDao = guestRepository.findById(fnd.getGuestId());
             if (optionalGuestDao.isPresent()) {
                 frequentNoShowersList.add(GuestMapperDB.INSTANCE.guestDaoToGuest(optionalGuestDao.get()));
             }
@@ -78,10 +77,10 @@ public class EventGuestRepositoryImpl implements EventGuestRepository {
 
     @Override
     public List<Event> findLowAttendanceEvents() {
-        List<UUID> lowAttendanceEventsIdList = eventGuestJpaRepository.findLowAttendanceEvents();
+        List<UUID> lowAttendanceEventsIdList = eventGuestRepository.findLowAttendanceEvents();
         List<Event> lowAttendanceEventsList = new ArrayList<>();
         for (UUID id : lowAttendanceEventsIdList) {
-            Optional<EventDao> optionalEventDao = eventJpaRepository.findById(id);
+            Optional<EventDao> optionalEventDao = eventRepository.findById(id);
             if (optionalEventDao.isPresent()) {
                 lowAttendanceEventsList.add(EventMapperDB.INSTANCE.eventDaoToEvent(optionalEventDao.get()));
             }
@@ -91,25 +90,25 @@ public class EventGuestRepositoryImpl implements EventGuestRepository {
 
     @Override
     public Optional<EventGuest> findEventGuestById(UUID id) {
-        EventGuest eventGuest = EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestJpaRepository.findById(id).orElse(null));
+        EventGuest eventGuest = EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestRepository.findById(id).orElse(null));
         return Optional.ofNullable(eventGuest);
     }
 
     @Override
     public Optional<EventGuest> findEventGuestByEventIdAndGuestId(UUID eventId, UUID guestId) {
-        EventGuest eventGuest = EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestJpaRepository.findByEventIdAndGuestId(eventId, guestId).orElse(null));
+        EventGuest eventGuest = EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestRepository.findByEventIdAndGuestId(eventId, guestId).orElse(null));
         return Optional.ofNullable(eventGuest);
     }
 
     @Override
     public EventGuest saveEventGuest(EventGuest eventGuest) {
         EventGuestDao eventGuestDao = EventGuestMapperDB.INSTANCE.eventGuestToEventGuestDao(eventGuest);
-        return EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestJpaRepository.save(eventGuestDao));
+        return EventGuestMapperDB.INSTANCE.eventGuestDaoToEventGuest(eventGuestRepository.save(eventGuestDao));
     }
 
     @Override
     public void deleteEventGuest(UUID id) {
-        eventGuestJpaRepository.deleteById(id);
+        eventGuestRepository.deleteById(id);
     }
 
     @Override
@@ -129,10 +128,10 @@ public class EventGuestRepositoryImpl implements EventGuestRepository {
                 tempTheme = "MB";
                 break;
         }
-        List<UUID> guestIdList = eventGuestJpaRepository.findGuestsAttendedAllEventsWithGivenTheme(tempTheme);
+        List<UUID> guestIdList = eventGuestRepository.findGuestsAttendedAllEventsWithGivenTheme(tempTheme);
         List<Guest> attendedGuestsByThemeList = new ArrayList<>();
         for (UUID id : guestIdList) {
-            Optional<GuestDao> optionalGuestDao = guestJpaRepository.findById(id);
+            Optional<GuestDao> optionalGuestDao = guestRepository.findById(id);
             if (optionalGuestDao.isPresent()) {
                 attendedGuestsByThemeList.add(GuestMapperDB.INSTANCE.guestDaoToGuest(optionalGuestDao.get()));
             }

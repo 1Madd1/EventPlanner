@@ -9,7 +9,8 @@ create table if not exists public.event(
 
 create table if not exists public.guest(
     id UUID not null,
-    name VARCHAR(50) not null,
+    first_name VARCHAR(50) not null,
+    last_name VARCHAR(50) not null,
     email VARCHAR(50) not null,
     phone_number VARCHAR(50) not null,
     primary key (id)

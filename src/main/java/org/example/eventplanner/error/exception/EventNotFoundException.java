@@ -1,0 +1,9 @@
+package org.example.eventplanner.error.exception;
+
+import org.example.eventplanner.error.ErrorCodes;
+
+public class EventNotFoundException extends EventPlannerException {
+    public EventNotFoundException(String m) {
+        super(ErrorCodes.EVENT_NOT_FOUND, m);
+    }
+}
