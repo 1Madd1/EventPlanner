@@ -1,16 +1,18 @@
 package org.example.eventplanner.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.eventplanner.dto.EventGuestDto;
-import org.example.eventplanner.dto.GuestDto;
 import org.example.eventplanner.dto.request.InviteGuestToEventRequest;
-import org.example.eventplanner.adapters.rest.mapper.EventGuestMapperApi;
-import org.example.eventplanner.adapters.rest.mapper.GuestMapperApi;
 import org.example.eventplanner.entity.EventGuest;
+import org.example.eventplanner.entity.Guest;
 import org.example.eventplanner.service.EventService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,27 +24,29 @@ public class EventGuestController {
     private final EventService eventService;
 
     @PostMapping("/invite-guest-to-event")
-    public EventGuest inviteGuestToEvent(@RequestBody InviteGuestToEventRequest inviteGuestToEventRequest) {
+    public ResponseEntity<EventGuest> inviteGuestToEvent(@RequestBody InviteGuestToEventRequest inviteGuestToEventRequest) {
         System.out.println("EventGuestController.inviteGuestToEvent called with inviteGuestToEventRequest -" + inviteGuestToEventRequest);
-        return eventService.inviteGuest(
+        return new ResponseEntity<>(eventService.inviteGuest(
                 inviteGuestToEventRequest.getEventId(),
                 inviteGuestToEventRequest.getGuestId()
-        );
+        ), HttpStatus.OK);
     }
 
     @GetMapping("/find-all-invited-guests")
-    public List<GuestDto> findAllInvitedGuestsByEventId(@RequestParam UUID eventId) {
+    public ResponseEntity<Page<Guest>> findAllInvitedGuestsByEventId(@RequestParam UUID eventId,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "5") int size,
+                                                                     @RequestParam(defaultValue = "id") String sortBy,
+                                                                     @RequestParam(defaultValue = "true") boolean ascending) {
         System.out.println("EventGuestController.findAllInvitedGuestsByEventId called with eventId -" + eventId);
-        return GuestMapperApi.INSTANCE.guestListToGuestDtoList(
-                eventService.findAllInvitedGuestByEventId(eventId)
-        );
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(eventService.findAllInvitedGuestByEventId(eventId, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/accept-invite")
-    public EventGuestDto acceptInvite(@RequestParam Map<String, String> paramMap) {
-        UUID eventId = UUID.fromString(paramMap.get("eventId"));
-        UUID guestId = UUID.fromString(paramMap.get("guestId"));
+    public ResponseEntity<EventGuest> acceptInvite(@RequestParam UUID eventId, @RequestParam UUID guestId) {
         System.out.println("EventGuestController.acceptInvite called with eventId - " + eventId + ", and guestId - " + guestId);
-        return EventGuestMapperApi.INSTANCE.eventGuestToEventGuestDto(eventService.acceptInvite(eventId, guestId));
+        return new ResponseEntity<>(eventService.acceptInvite(eventId, guestId), HttpStatus.OK);
     }
 }

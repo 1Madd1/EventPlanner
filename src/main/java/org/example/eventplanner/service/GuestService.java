@@ -1,6 +1,9 @@
 package org.example.eventplanner.service;
 
+import org.example.eventplanner.dto.GuestDto;
 import org.example.eventplanner.entity.Guest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,31 +13,33 @@ public interface GuestService {
     /***
      *  Create and persist an agent
      *
-     * @param guest - Newly created guest
+     * @param guestDto - Newly created guest
      * @return Valid guest object
      */
-    Guest createGuest(Guest guest);
+    Guest createGuest(GuestDto guestDto);
 
     /***
      *  Update guest data fields
      *
-     * @param guest - must be a valid guest object with valid id
+     * @param guestDto - must be a valid guest object with valid id
      * @return Updated Guest object
      */
-    Guest updateGuest(Guest guest);
+    Guest updateGuest(GuestDto guestDto);
 
     /***
      *
+     * @param pageable - used for paging and sorting data
      * @return List of all guests
      */
-    List<Guest> findAllGuests();
+    Page<Guest> findAllGuests(Pageable pageable);
 
     /**
      *
      * @param guestName - used to search through all existing guests
+     * @param pageable - used for paging and sorting data
      * @return List of existing guests that contain given guestName
      */
-    List<Guest> findAllByName(String guestName);
+    Page<Guest> findAllByName(String guestName, Pageable pageable);
 
     /***
      * @param guestId - valid guest UUID

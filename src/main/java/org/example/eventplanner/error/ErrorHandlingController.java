@@ -17,4 +17,11 @@ public class ErrorHandlingController {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(Integer.parseInt(ex.getCode())));
     }
 
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ExceptionResponse> generalException(Exception ex) {
+//        ExceptionResponse response = new ExceptionResponse();
+//        response.setMessage(ex.getMessage());
+//        return new ResponseEntity<>(response, HttpStatus.);
+//    } Create other necessary exception handlers
+
 }

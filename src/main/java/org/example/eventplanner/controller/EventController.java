@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,32 +22,32 @@ public class EventController {
     private final EventService eventService;
     
     @GetMapping("/{id}")
-    public EventDto getById(@PathVariable(name = "id") UUID eventId) {
+    public ResponseEntity<Event> getById(@PathVariable(name = "id") UUID eventId) {
         System.out.println("EventController.geyById with id: " + eventId + " called");
 
-        return EventMapperApi.INSTANCE.eventToEventDto(eventService.findEventById(eventId));
+        return new ResponseEntity<>(eventService.findEventById(eventId), HttpStatus.OK);
     }
     
     @PostMapping
-    public EventDto createEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto) {
         System.out.println("EventController.createEvent called - " + eventDto);
 
-        Event createdEvent = eventService.createEvent(EventMapperApi.INSTANCE.eventDtoToEvent(eventDto));
-        return EventMapperApi.INSTANCE.eventToEventDto(createdEvent);
+        Event createdEvent = eventService.createEvent(eventDto);
+        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
 
     @PutMapping
-    public EventDto updateEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity<Event> updateEvent(@RequestBody EventDto eventDto) {
         System.out.println("EventController.updateEvent called - " + eventDto);
 
-        Event updatedEvent = eventService.updateEvent(EventMapperApi.INSTANCE.eventDtoToEvent(eventDto));
-        return EventMapperApi.INSTANCE.eventToEventDto(updatedEvent);
+        Event updatedEvent = eventService.updateEvent(eventDto);
+        return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deleteEventById(@RequestParam UUID eventId) {
+    public ResponseEntity deleteEventById(@RequestParam UUID eventId) {
         System.out.println("EventController.deleteEventById called for eventID - " + eventId);
-        eventService.deleteEvent(eventId);
+        return eventService.findEventById(eventId) == null ? ResponseEntity.ok().build() : new ResponseEntity<>(HttpStatus.valueOf(409));
     }
 
     @GetMapping

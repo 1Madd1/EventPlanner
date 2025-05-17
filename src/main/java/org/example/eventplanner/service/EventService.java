@@ -1,5 +1,6 @@
 package org.example.eventplanner.service;
 
+import org.example.eventplanner.dto.EventDto;
 import org.example.eventplanner.entity.Event;
 import org.example.eventplanner.entity.EventGuest;
 import org.example.eventplanner.entity.Guest;
@@ -14,18 +15,18 @@ public interface EventService {
     /***
      *  Create and persist an agent
      *
-     * @param event - Newly created event
+     * @param eventDto - Newly created event
      * @return Valid event object
      */
-    Event createEvent(Event event);
+    Event createEvent(EventDto eventDto);
 
     /***
      *  Update event data fields
      *
-     * @param event - must be a valid event object with valid id
+     * @param eventDto - must be a valid eventDto object with valid id
      * @return Updated Event object
      */
-    Event updateEvent(Event event);
+    Event updateEvent(EventDto eventDto);
 
     /***
      *
@@ -35,9 +36,11 @@ public interface EventService {
 
     /***
      *
-     * @return List of all invited guests by given eventId
+     * @param eventId - must be a valid id
+     * @param pageable - used for paging and sorting data
+     * @return Page of all invited guests by given eventId
      */
-    List<Guest> findAllInvitedGuestByEventId(UUID eventId);
+    Page<Guest> findAllInvitedGuestByEventId(UUID eventId, Pageable pageable);
 
     /***
      * @param eventId - valid event UUID

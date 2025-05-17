@@ -3,6 +3,9 @@ package org.example.eventplanner.repository;
 import org.example.eventplanner.entity.EventGuest;
 import org.example.eventplanner.entity.FrequentNoShowers;
 import org.example.eventplanner.entity.Top5Guests;
+import org.example.eventplanner.entity.enums.Theme;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,7 +18,9 @@ public interface EventGuestRepository extends JpaRepository<EventGuest, UUID> {
 
     Optional<EventGuest> findByEventIdAndGuestId(UUID eventId, UUID guestId);
 
-    List<EventGuest> findAllByEventId(UUID eventId);
+    Page<EventGuest> findAllByEventId(UUID eventId, Pageable pageable);
+
+    Page<EventGuest> findAllByGuestId(UUID guestId, Pageable pageable);
 
     @Query(value = """
     SELECT guest_id, COUNT(*) AS attendanceCount FROM event_guest
@@ -68,7 +73,7 @@ public interface EventGuestRepository extends JpaRepository<EventGuest, UUID> {
         AND eg.attended = FALSE
     )
 """)
-    List<UUID> findGuestsAttendedAllEventsWithGivenTheme(String theme);
+    List<UUID> findGuestsAttendedAllEventsWithGivenTheme(Theme theme);
 
 
 }

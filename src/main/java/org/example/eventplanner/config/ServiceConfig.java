@@ -3,8 +3,10 @@ package org.example.eventplanner.config;
 import org.example.eventplanner.repository.EventGuestRepository;
 import org.example.eventplanner.repository.EventRepository;
 import org.example.eventplanner.repository.GuestRepository;
+import org.example.eventplanner.service.EventGuestService;
 import org.example.eventplanner.service.EventService;
 import org.example.eventplanner.service.GuestService;
+import org.example.eventplanner.service.impl.EventGuestServiceImpl;
 import org.example.eventplanner.service.impl.EventServiceImpl;
 import org.example.eventplanner.service.impl.GuestServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +27,22 @@ public class ServiceConfig {
     }
 
     @Bean
-    GuestService guestService(GuestRepository guestRepository) {
+    GuestService guestService(GuestRepository guestRepository,
+                              EventGuestRepository eventGuestRepository) {
         return GuestServiceImpl.builder()
                 .guestRepository(guestRepository)
+                .eventGuestRepository(eventGuestRepository)
+                .build();
+    }
+
+    @Bean
+    EventGuestService eventGuestService(EventRepository eventRepository,
+                                        GuestRepository guestRepository,
+                                        EventGuestRepository eventGuestRepository) {
+        return EventGuestServiceImpl.builder()
+                .eventRepository(eventRepository)
+                .guestRepository(guestRepository)
+                .eventGuestRepository(eventGuestRepository)
                 .build();
     }
 
