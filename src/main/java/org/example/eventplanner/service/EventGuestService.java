@@ -50,9 +50,9 @@ public interface EventGuestService {
 
     /***
      *
-     * @return List of frequent no showing guests
+     * @return Page of frequent no showing guests
      */
-    List<Guest> findFrequentNoShowers(Pageable pageable);
+    Page<Guest> findFrequentNoShowers(Pageable pageable);
 
     /***
      *

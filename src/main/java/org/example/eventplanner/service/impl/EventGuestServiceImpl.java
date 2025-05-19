@@ -80,14 +80,14 @@ public class EventGuestServiceImpl implements EventGuestService {
     }
 
     @Override
-    public List<Guest> findFrequentNoShowers(Pageable pageable) {
+    public Page<Guest> findFrequentNoShowers(Pageable pageable) {
         List<Guest> frequentNoShowingGuestList = new ArrayList<>();
         List<FrequentNoShowers> frequentNoShowersList = eventGuestRepository.findFrequentNoShowers();
         for (FrequentNoShowers fn : frequentNoShowersList) {
             Optional<Guest> optionalGuest = guestRepository.findById(fn.getGuestId());
             optionalGuest.ifPresent(frequentNoShowingGuestList::add);
         }
-        return frequentNoShowingGuestList;
+        return new PageImpl<>(frequentNoShowingGuestList, pageable, frequentNoShowersList.size());
     }
 
     @Override

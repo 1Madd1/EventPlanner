@@ -1,5 +1,6 @@
 package org.example.eventplanner.error;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.example.eventplanner.error.exception.EventPlannerException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
+@Hidden
 public class ErrorHandlingController {
 
     @ExceptionHandler(EventPlannerException.class)

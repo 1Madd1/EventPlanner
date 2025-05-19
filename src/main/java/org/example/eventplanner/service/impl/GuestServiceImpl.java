@@ -59,8 +59,8 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
-    public Page<Guest> findAllByName(String guestName, Pageable pageable) {
-        return guestRepository.findAllByNameContainingIgnoreCase(guestName, pageable);
+    public Page<Guest> findAllByFirstName(String guestFirstName, Pageable pageable) {
+        return guestRepository.findAllByFirstNameContainingIgnoreCase(guestFirstName, pageable);
     }
 
     @Override

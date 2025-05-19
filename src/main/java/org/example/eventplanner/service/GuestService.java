@@ -5,7 +5,6 @@ import org.example.eventplanner.entity.Guest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface GuestService {
@@ -35,11 +34,11 @@ public interface GuestService {
 
     /**
      *
-     * @param guestName - used to search through all existing guests
+     * @param guestFirstName - used to search through all existing guests
      * @param pageable - used for paging and sorting data
-     * @return List of existing guests that contain given guestName
+     * @return List of existing guests that contain given guestFirstName
      */
-    Page<Guest> findAllByName(String guestName, Pageable pageable);
+    Page<Guest> findAllByFirstName(String guestFirstName, Pageable pageable);
 
     /***
      * @param guestId - valid guest UUID

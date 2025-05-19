@@ -1,5 +1,7 @@
 package org.example.eventplanner.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.example.eventplanner.repository.EventGuestRepository;
 import org.example.eventplanner.repository.EventRepository;
 import org.example.eventplanner.repository.GuestRepository;

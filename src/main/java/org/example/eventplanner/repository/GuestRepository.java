@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface GuestRepository extends JpaRepository<Guest, UUID> {
     Optional<Guest> findByEmail(String email);
 
-    Page<Guest> findAllByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Guest> findAllByFirstNameContainingIgnoreCase(String name, Pageable pageable);
 }
